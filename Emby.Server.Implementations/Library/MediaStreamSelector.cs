@@ -65,8 +65,8 @@ namespace Emby.Server.Implementations.Library
                 }
                 else
                 {
-                    // Respect forced flag.
-                    stream = sortedStreams.FirstOrDefault(x => x.IsForced);
+                    // Respect forced flag of the user's preferred subtitle language
+                    stream = sortedStreams.FirstOrDefault(x => x.IsForced && preferredLanguages.Contains(x.Language, StringComparison.OrdinalIgnoreCase));
                 }
             }
             else if (mode == SubtitlePlaybackMode.Always)
@@ -77,8 +77,8 @@ namespace Emby.Server.Implementations.Library
             }
             else if (mode == SubtitlePlaybackMode.OnlyForced)
             {
-                // Only load subtitles that are flagged forced.
-                stream = sortedStreams.FirstOrDefault(x => x.IsForced);
+                // Only load subtitles that are flagged forced of the user's preferred subtitle language
+                stream = sortedStreams.FirstOrDefault(x => x.IsForced && preferredLanguages.Contains(x.Language, StringComparison.OrdinalIgnoreCase));
             }
 
             return stream?.Index;
@@ -129,8 +129,8 @@ namespace Emby.Server.Implementations.Library
             }
             else if (mode == SubtitlePlaybackMode.OnlyForced)
             {
-                // Always load the most suitable full subtitles
-                filteredStreams = sortedStreams.Where(s => s.IsForced).ToList();
+                // Always load the most suitable full subtitles of the user's preferred subtitle language
+                filteredStreams = sortedStreams.Where(s => s.IsForced && preferredLanguages.Contains(s.Language, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             // Load forced subs if we have found no suitable full subtitles
